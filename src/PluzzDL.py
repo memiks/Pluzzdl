@@ -22,6 +22,7 @@ import urllib
 import urllib2
 import xml.etree.ElementTree
 import xml.sax
+import subprocess
 
 from Historique import Historique, Video
 from Navigateur import Navigateur
@@ -140,6 +141,7 @@ class PluzzDL( object ):
 					self.progression.afficherFin()
 					self.telechargementFini = True
 					logger.info( "Fin du téléchargement" )
+					self.convertVideo()
 		except KeyboardInterrupt:
 			logger.info( "Interruption clavier" )
 		except:
@@ -150,6 +152,23 @@ class PluzzDL( object ):
 			# Fermeture du fichier
 			self.fichierVideo.close()
 
+	def convertVideo( self ):
+		self.nomFichierMp4 = self.nomFichier.replace('.flv', '.mp4')
+		# Convert to mp4
+		cmd = 'ffmpeg -v -10 -i %s -acodec copy -vcodec copy %s' % (self.nomFichier, self.nomFichierMp4)
+		logger.info( "Conversion au format mp4" )
+		is_file_present = os.path.isfile(self.nomFichierMp4)
+		try:
+			subprocess.check_call(cmd.split(' '))
+			os.unlink(self.nomFichier)
+		except OSError:
+			logger.critical( "Erreur: la commande ffmpeg n'a pas été trouvée. Conversion annulée." )
+		except subprocess.CalledProcessError:
+			logger.critical( "Erreur: la commande a été annulée." )
+			# delete file if it was not there before conversion process started
+			if os.path.isfile(self.nomFichierMp4) and not is_file_present:
+				os.unlink(self.nomFichierMp4)
+		
 	def debutVideo( self, fragID, fragData ):
 		
 		# Old way
@@ -288,3 +307,4 @@ class Progression( ProgressionVide ):
 	def afficherFin( self ):
 		if( self.old < 100 ):
 			logger.info( "Avancement : %3d %%" %( 100 ) )
+
