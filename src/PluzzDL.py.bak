@@ -226,13 +226,20 @@ class PluzzDL( object ):
 			return None
 
 	def debutVideo( self, fragID, fragData ):
+		
+		# Old way
+		# if( fragID == 1 ):
+			# start = fragData.find( "mdat" ) + 4
+		# else:
+			# start = fragData.find( "\x0f\x09" ) + 1
+
 		# Skip fragment header
 		start = fragData.find( "mdat" ) + 4
 		# For all fragment (except frag1)
 		if( fragID > 1 ):
 			# Skip 2 FLV tags
 			for dummy in range( 2 ):
-				tagLen, = struct.unpack_from( ">L", fragData, start ) # Read 32 bits (big endian)
+				tagLen, = struct.unpack_from( '>L', fragData, start ) # Read 32 bits (big endian)
 				tagLen &= 0x00ffffff                                  # Take the last 24 bits
 				start  += tagLen + 11 + 4                             # 11 = tag header len ; 4 = tag footer len
 		return start
@@ -326,3 +333,34 @@ class PluzzDLInfosHandler( xml.sax.handler.ContentHandler ):
 			self.isUrl = False
 		elif( name == "drm" ):
 			self.isDRM = False
+
+class ProgressionVide( object ):
+	
+	def __init__( self, nbMax, indice = 1 ):
+		self.nbMax  = nbMax
+		self.indice = indice
+		self.old    = 0
+		self.new    = 0
+	
+	def afficher( self ):
+		pass
+		
+	def afficherFin( self ):
+		pass
+	
+class Progression( ProgressionVide ):
+	
+	def __init__( self, nbMax, indice ):
+		ProgressionVide.__init__( self, nbMax, indice )
+		
+	def afficher( self ):
+		self.new = min( int( ( self.indice / self.nbMax ) * 100 ), 100 )
+		if( self.new != self.old ):
+			logger.info( "Avancement : %3d %%" %( self.new ) )
+			self.old = self.new
+		self.indice += 1
+	
+	def afficherFin( self ):
+		if( self.old < 100 ):
+			logger.info( "Avancement : %3d %%" %( 100 ) )
+

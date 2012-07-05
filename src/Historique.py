@@ -13,12 +13,6 @@ import logging
 logger = logging.getLogger( "pluzzdl" )
 
 #
-# Constantes
-#
-
-FICHIER_CACHE = os.path.join( os.path.expanduser( "~" ), ".cache", "pluzzdl" )
-
-#
 # Classes
 #
 
@@ -42,20 +36,26 @@ class Video( object ):
 class Historique( object ):
 	
 	def __init__( self ):
+		# Le chemin du fichier d'historique est different selon l'OS utilise
+		if( os.name == "nt" ):
+			self.fichierCache = "pluzzdl.cache"
+		else:
+			self.fichierCache = os.path.join( os.path.expanduser( "~" ), ".cache", "pluzzdl" )
+
 		self.charger()
 	
 	def __del__( self ):
 		self.sauver()
 	
 	def charger( self ):
-		if( os.path.exists( FICHIER_CACHE ) ):
+		if( os.path.exists( self.fichierCache ) ):
 			try:
-				with open( FICHIER_CACHE, "r" ) as fichier:
+				with open( self.fichierCache, "r" ) as fichier:
 					self.historique = pickle.load( fichier )
-					logger.info( "Historique chargé" )
+					logger.debug( "Historique chargé" )
 			except:
 				self.historique = []
-				logger.warning( "Impossible de lire le fichier d'historique %s, création d'un nouveau fichier" %( FICHIER_CACHE ) )
+				logger.warning( "Impossible de lire le fichier d'historique %s, création d'un nouveau fichier" %( self.fichierCache ) )
 		else:
 			self.historique = []
 			logger.info( "Fichier d'historique indisponible, création d'un nouveau fichier" )
@@ -63,11 +63,11 @@ class Historique( object ):
 	def sauver( self ):
 		self.nettoyer()
 		try:
-			with open( FICHIER_CACHE, "w" ) as fichier:
+			with open( self.fichierCache, "w" ) as fichier:
 				pickle.dump( self.historique, fichier )
-				logger.info( "Historique sauvé" )
+				logger.debug( "Historique sauvé" )
 		except:
-			logger.warning( "Impossible d'écrire le fichier d'historique %s" %( FICHIER_CACHE ) )
+			logger.warning( "Impossible d'écrire le fichier d'historique %s" %( self.fichierCache ) )
 
 	def nettoyer( self ):
 		# Supprimer les videos de plus de 10 jours de l'historique

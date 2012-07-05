@@ -7,7 +7,7 @@
 
 __author__  = "Chaoswizard"
 __license__ = "GPL 2"
-__version__ = "0.8.4"
+__version__ = "0.8.5"
 __url__     = "http://code.google.com/p/tvdownloader/"
 
 #
@@ -17,6 +17,7 @@ __url__     = "http://code.google.com/p/tvdownloader/"
 import argparse
 import logging
 import platform
+import os
 import re
 import sys
 
@@ -58,7 +59,8 @@ if( __name__ == "__main__" ) :
 	logger.debug( "pluzzdl %s avec Python %s" %( __version__, platform.python_version() ) )
 	
 	# Verification de l'URL
-	if( re.match( "http://www.pluzz.fr/[^\.]+?\.html", args.urlEmission ) is None ):
+	if( re.match( "http://www.pluzz.fr/[^\.]+?\.html", args.urlEmission ) is None 
+	and re.match( "http://www.francetv.fr/[^\.]+?", args.urlEmission ) is None ):
 		logger.error( "L'URL \"%s\" n'est pas valide" %( args.urlEmission ) )
 		sys.exit( -1 )
 	
@@ -66,10 +68,16 @@ if( __name__ == "__main__" ) :
 	if( args.proxy is not None and re.match( "http://[^:]+?:\d+", args.proxy ) is None ):
 		logger.error( "Le proxy \"%s\" n'est pas valide" %( args.proxy ) )
 		sys.exit( -1 )
+
+	# Fonction d'affichage de l'avancement du téléchargement
+	if( args.progressbar ):
+		progressFnct = lambda x : logger.info( "Avancement : %3d %%" %( x ) )
+	else:
+		progressFnct = lambda x : None
 	
 	# Telechargement de la video
 	PluzzDL( url          = args.urlEmission,
 			 useFragments = args.fragments,
 			 proxy        = args.proxy,
-			 progressbar  = args.progressbar,
-			 resume       = args.resume )
+			 resume       = args.resume,
+			 progressFnct = progressFnct )

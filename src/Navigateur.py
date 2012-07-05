@@ -54,6 +54,8 @@ class Navigateur:
 			elif( hasattr( e, 'code' ) ):
 				logger.debug( "Erreur %d" %( e.code ) )
 			raise
+		except:
+			raise
 	
 	def appendCookie( self, cookieName, cookieValue ):
 		for cookie in self.cookiejar:
