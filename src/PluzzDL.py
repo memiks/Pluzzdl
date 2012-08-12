@@ -278,7 +278,7 @@ class PluzzDL( object ):
 			self.fichierVideo.close()
 
 	def convertVideo( self ):
-		self.nomFichierMp4 = self.nomFichier.replace('.flv', '.mp4')
+		self.nomFichierMp4 = self.nomFichier.replace('.' + self.ext, '.mp4')
 		# Convert to mp4
 		cmd = 'ffmpeg -v -10 -i %s -acodec copy -vcodec copy %s' % (self.nomFichier, self.nomFichierMp4)
 		logger.info( "Conversion au format mp4" )
