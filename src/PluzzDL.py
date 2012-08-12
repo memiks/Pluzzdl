@@ -394,9 +394,9 @@ class PluzzDL( object ):
 		bestBw = 0
 		bestPl = None
 		for playlist in self.playlists:
-			if playlist['BANDWIDTH'] > bestBw:
+			if int(playlist['BANDWIDTH']) > int(bestBw):
 				bestPl = playlist
-				bestBw = playlist['BANDWIDTH']
+				bestBw = int(playlist['BANDWIDTH'])
 		self.bestPlaylist = bestPl
 
 	def getFragmentsList( self ):
