@@ -111,6 +111,8 @@ class PluzzDL( object ):
 				except:
 					self.nomFichier = os.path.join( self.outDir, "video.flv" )
 
+		self.generateNomFichier()
+
 		if self.mode == "manifest":
 			self.getVideoViaManifest()
 
@@ -339,6 +341,14 @@ class PluzzDL( object ):
 		except :
 			logger.critical( "Impossible de récupérer l'ID de l'émission" )
 			sys.exit( -1 )
+
+	def generateNomFichier( self ):
+		try :
+			page     = self.navigateur.getFichier( self.url )
+			self.nomFichier = os.path.join( self.outDir, "%s.%s" %( re.findall( '<meta property="og:url" content="http://www.pluzz.fr/([^\.]+?)\.html" />', page )[ 0 ], self.ext ) )
+			logger.debug( "Nom unique de l'émission : %s" %( self.nomFichier ) )
+		except :
+			logger.critical( "Impossible de générer un nom unique de fichier" )
 
 	def parseInfos( self ):
 		try :
