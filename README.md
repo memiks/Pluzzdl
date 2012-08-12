@@ -1,4 +1,5 @@
 Pluzzdl
 =======
 
-My modification of Pluzzdl python script from this google code : http://code.google.com/p/tvdownloader/wiki/pluzzdl
+Another fork of PluzzDL to circumvent current breakage in download and use the M3U8 playlist as a source.
+To enable this mode, please use '--playlist'.
