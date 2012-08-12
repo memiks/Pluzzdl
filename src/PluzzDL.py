@@ -405,7 +405,7 @@ class PluzzDL( object ):
 		self.urlFrag = self.baseURL + "/segment"
 		for line in self.fragments.split("\n"):
 			if foundM3U:
-				match = re.compile(self.baseURL + "/segment(\d+)_.*_av\.ts\?(.*)").search(line)
+				match = re.compile(self.baseURL + "/segment(\d+)_.*\.ts\?(.*)").search(line)
 				if line.startswith("http") and match:
 					segid = int(match.group(1))
 					params = match.group(2)
