@@ -38,6 +38,9 @@ if( __name__ == "__main__" ) :
 	parser.add_argument( "-b", "--progressbar", action = "store_true", default = False, help = 'affiche la progression du téléchargement' )
 	parser.add_argument( "-p", "--proxy", dest = "proxy", metavar = "PROXY",            help = 'utilise un proxy HTTP au format suivant http://URL:PORT' )	
 	parser.add_argument( "-v", "--verbose",     action = "store_true", default = False, help = 'affiche les informations de debugage' )
+	group = parser.add_mutually_exclusive_group()
+	group.add_argument( "--manifest",     action = "store_true", default = False, help = 'télécharger via manifest.f4m')
+	group.add_argument( "--playlist",     action = "store_true", default = False, help = 'télécharger via playlist.m3u8')
 	parser.add_argument( "--nocolor",           action = 'store_true', default = False, help = 'désactive la couleur dans le terminal' )
 	parser.add_argument( "--version",           action = 'version', version = "pluzzdl %s" %( __version__ ) )
 	parser.add_argument( "urlEmission", action = "store", help = "URL de l'émission Pluzz a charger" )
@@ -80,4 +83,6 @@ if( __name__ == "__main__" ) :
 			 useFragments = args.fragments,
 			 proxy        = args.proxy,
 			 resume       = args.resume,
-			 progressFnct = progressFnct )
+			 progressFnct = progressFnct,
+			 manifest     = args.manifest,
+			 playlist     = args.playlist)
