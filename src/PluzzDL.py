@@ -2,9 +2,9 @@
 # -*- coding:Utf-8 -*-
 
 # Notes :
-#    -> Filtre Wireshark : 
+#    -> Filtre Wireshark :
 #          http.host contains "ftvodhdsecz" or http.host contains "francetv" or http.host contains "pluzz"
-#    -> 
+#    ->
 
 #
 # Modules
@@ -110,13 +110,13 @@ class PluzzDL( object ):
 		self.pv20, self.hdntl = self.pv2.split( ";" )
 		self.pvtokenData = r"st=0000000000~exp=9999999999~acl=%2f%2a~data=" + self.pv20 + "!" + self.playerHash
 		self.pvtoken = "pvtoken=%s~hmac=%s" %( urllib.quote( self.pvtokenData ), hmac.new( self.hmacKey, self.pvtokenData, hashlib.sha256 ).hexdigest() )
-		
+
 		#
 		# Creation de la video
 		#
 		self.premierFragment    = 1
 		self.telechargementFini = False
-		
+
 		# S'il faut reprendre le telechargement
 		if( self.resume ):
 			video = self.historique.getVideo( self.urlFrag )
@@ -138,11 +138,11 @@ class PluzzDL( object ):
 				self.ouvrirNouvelleVideo()
 		else: # S'il ne faut pas reprendre le telechargement
 			self.ouvrirNouvelleVideo()
-			
+
 		# Calcul l'estimation du nombre de fragments
 		self.nbFragMax = round( self.duree / 6 )
 		logger.debug( "Estimation du nombre de fragments : %d" %( self.nbFragMax ) )
-		
+
 		# Ajout des fragments
 		logger.info( "Début du téléchargement des fragments" )
 		try :
@@ -165,7 +165,7 @@ class PluzzDL( object ):
 							self.configuration.writeConfig()
 							logger.info( "Un nouveau hash a été trouvé ; essayez de relancer l'application" )
 						else:
-							logger.critical( "Pas de nouveau hash disponible..." )						
+							logger.critical( "Pas de nouveau hash disponible..." )
 					else:
 						logger.critical( "Impossible de charger la vidéo" )
 				elif( e.code == 404 ):
@@ -199,7 +199,7 @@ class PluzzDL( object ):
 			# delete file if it was not there before conversion process started
 			if os.path.isfile(self.nomFichierMp4) and not is_file_present:
 				os.unlink(self.nomFichierMp4)
-		
+
 	def getPlayerHash( self ):
 		# Get SWF player
 		playerData = self.navigateur.getFichier( "http://www.pluzz.fr/layoutftv/players/h264/player.swf" )
@@ -236,7 +236,7 @@ class PluzzDL( object ):
 				tagLen &= 0x00ffffff                                  # Take the last 24 bits
 				start  += tagLen + 11 + 4                             # 11 = tag header len ; 4 = tag footer len
 		return start
-		
+
 	def getID( self ):
 		try :
 			page     = self.navigateur.getFichier( self.url )
@@ -295,21 +295,21 @@ class PluzzDL( object ):
 		except :
 			logger.critical( "Impossible d'écrire dans le répertoire %s" %( os.getcwd() ) )
 			sys.exit( -1 )
-		
+
 class PluzzDLInfosHandler( xml.sax.handler.ContentHandler ):
-	
+
 	def __init__( self, pluzzdl ):
 		self.pluzzdl = pluzzdl
-		
+
 		self.isUrl = False
 		self.isDRM = False
-		
+
 	def startElement( self, name, attrs ):
 		if( name == "url" ):
 			self.isUrl = True
 		elif( name == "drm" ):
 			self.isDRM = True
-	
+
 	def characters( self, data ):
 		if( self.isUrl ):
 			if( data[ : 3 ] == "mms" ):
